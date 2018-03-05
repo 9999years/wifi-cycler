@@ -1,23 +1,21 @@
-Import-Module ~\Documents\PowerShellModules\device-managment\DeviceManagement.psd1
-
 function Cycle-Device {
 	[CmdletBinding()]
 	Param(
 		[Parameter(
 			ValueFromPipeline=$True
 		)]
-		[String]$Name,
-		[Int]$WaitSeconds=3
+		[String]$HardwareId,
+		[Int]$WaitSeconds=3,
+		[String]$DevCon='devcon64.exe'
 	)
 
 	Process {
-		$Device = Get-Device | Where-Object -Property Name -EQ $Name
-		$Device | Disable-Device | Out-Null
+		& $DevCon disable $HardwareId
 		Start-Sleep $WaitSeconds
-		$Device | Enable-Device | Out-Null
+		& $DevCon enable $HardwareId
 	}
 }
 
-$Name = 'Qualcomm Atheros AR922X Wireless Network Adapter'
+$HardwareId = 'PCI\VEN_168C&DEV_0029&CC_0280'
 
-Cycle-Device $Name
+Cycle-Device $HardwareId
